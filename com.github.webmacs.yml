@@ -1,0 +1,130 @@
+app-id: "com.github.webmacs"
+runtime: "org.kde.Platform"
+runtime-version: "5.12"
+sdk: "org.kde.Sdk"
+command: "webmacs"
+
+finish-args:
+  - "--share=network"
+  - "--share=ipc"
+  - "--socket=x11"
+  - "--socket=wayland"
+  - "--device=dri"
+  - "--persist=.config/webmacs"
+  - "--socket=pulseaudio"
+  - "--filesystem=xdg-download"
+
+# rename-desktop-file: "webmacs.desktop"
+# rename-icon: "webmacs"
+
+modules:
+  - name: sip
+    config-opts:
+      - "--no-dist-info"
+      - "--no-stubs"
+      - "--bindir=/app/bin"
+      - "--destdir=/app/lib/python3.7/site-packages"
+      - "--incdir=/app/include"
+      - "--pyidir=/app/lib/python3.7/site-packages"
+      - "--sipdir=/app/share/sip"
+      - "--sip-module PyQt5.sip"
+    sources:
+      - type: archive
+        url: https://www.riverbankcomputing.com/static/Downloads/sip/4.19.17/sip-4.19.17.tar.gz
+        sha256: 12bcd8f4d5feefc105bc075d12c5090ee783f7380728563c91b8b95d0ec45df3
+      - type: script
+        commands:
+          - processed=`sed -e 's|--prefix=/app||' <<< $@`
+          - python3 configure.py $processed
+        dest-filename: configure
+    cleanup:
+      - "/bin"
+      - "/include"
+
+  - name: "pyqt5"
+    config-opts:
+      - "--assume-shared"
+      - "--concatenate"
+      - "--confirm-license"
+      - "--no-designer-plugin"
+      - "--no-dist-info"
+      - "--no-docstrings"
+      - "--no-qml-plugin"
+      - "--no-qsci-api"
+      - "--no-stubs"
+      - "--no-tools"
+      - QMAKE_CFLAGS_RELEASE='-I/usr/include/python3.7m/'
+      - QMAKE_CXXFLAGS_RELEASE='-I/usr/include/python3.7m/'
+    build-options:
+      arch:
+        i386:
+          config-opts:
+            - "--enable=QtCore"
+            - "--enable=QtGui"
+            - "--enable=QtNetwork"
+            - "--enable=QtPrintSupport"
+            - "--enable=QtWebChannel"
+            - "--enable=QtWidgets"
+            - "--enable=QtSql"
+            - "--enable=QtOpenGL"
+            - "--enable=QtQuick"
+            - "--enable=QtQml"
+        x86_64:
+          config-opts:
+            - "--enable=QtCore"
+            - "--enable=QtGui"
+            - "--enable=QtNetwork"
+            - "--enable=QtPrintSupport"
+            - "--enable=QtWebChannel"
+            # - "--enable=QtWebKit"
+            # - "--enable=QtWebKitWidgets"
+            - "--enable=QtX11Extras"
+            - "--enable=QtWidgets"
+            - "--enable=QtSql"
+            - "--enable=QtOpenGL"
+            - "--enable=QtQuick"
+            - "--enable=QtQml"
+    sources:
+      - type: archive
+        url: https://www.riverbankcomputing.com/static/Downloads/PyQt5/5.12.2/PyQt5_gpl-5.12.2.tar.gz
+        sha256: c565829e77dc9c281aa1a0cdf2eddaead4e0f844cbaf7a4408441967f03f5f0f
+      - type: script
+        commands:
+        - processed=`sed -e 's|prefix|sysroot|' <<< $@`
+        - python3 configure.py $processed
+        dest-filename: configure
+    cleanup:
+      - "/lib/debug"
+      - "/share/sip"
+
+  - name: pyqt5-webengine
+    config-opts:
+      - "--concatenate"
+      - "--no-dist-info"
+      - "--no-docstrings"
+      - "--no-qsci-api"
+      - "--no-sip-files"
+      - QMAKE_CFLAGS_RELEASE='-I/usr/include/python3.7m/'
+      - QMAKE_CXXFLAGS_RELEASE='-I/usr/include/python3.7m/'
+    sources:
+      - type: archive
+        url: https://www.riverbankcomputing.com/static/Downloads/PyQtWebEngine/5.12.1/PyQtWebEngine_gpl-5.12.1.tar.gz
+        sha256: 860704672ea1b616e1347be1f347bc1c749e64ed378370863fe209e84e9bd473
+      - type: script
+        commands:
+          - processed=`sed -e 's|prefix|sysroot|' <<< $@`
+          - python3 configure.py $processed
+        dest-filename: configure
+    cleanup:
+      - "/lib/debug"
+
+  - pypi-dependencies.json
+
+  - name: "webmacs"
+    buildsystem: "simple"
+    build-commands:
+      - "pip3 install --prefix=/app --no-deps ."
+    sources:
+      - type: "archive"
+        url: "https://github.com/parkouss/webmacs/releases/download/0.7/webmacs-0.7.tar.gz"
+        sha256: "37d3d125b3c40b978f9630ab171403cbc63a73bb40b8679c485d2e7cca72a0a9"
