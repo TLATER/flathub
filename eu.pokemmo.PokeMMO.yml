@@ -1,0 +1,65 @@
+app-id: eu.pokemmo.PokeMMO
+runtime: org.freedesktop.Sdk
+runtime-version: '20.08'
+sdk: org.freedesktop.Sdk
+command: pokemmo
+tags: [proprietary]
+
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.openjdk11
+
+finish-args:
+  - --persist=.pokemmo
+  - --socket=pulseaudio
+  - --socket=x11
+  - --share=ipc
+  - --device=dri
+  - --share=network
+  - --env=JAVA_HOME=/app/jre
+
+modules:
+  - name: xprop
+    sources:
+      - type: archive
+        url: https://www.x.org/archive/individual/app/xprop-1.2.4.tar.gz
+        sha256: dddb6e208ffa515e68f001c22077a465f1365a4bcf91d9b37f336a6c0d15400d
+
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      - /usr/lib/sdk/openjdk11/install.sh
+
+  - name: pokemmo
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 apply_extra /app/bin/apply_extra
+      - install -Dp -m 755 pokemmo /app/bin/pokemmo
+      - install -Dp -m 644 eu.pokemmo.PokeMMO.desktop /app/share/applications/eu.pokemmo.PokeMMO.desktop
+    sources:
+      - type: extra-data
+        filename: pokemmo-launcher_1.4-1.deb
+        url: https://dl.pokemmo.eu/download/pokemmo-launcher_1.4-1.deb
+        sha256: 62ec6eb52ecbc85471b2f58ec9eee4f6fa544e9014e60a1bb6ef0ef21718ef3f
+        size: 406002
+        x-checker-data:
+          type: rotating-url
+          url: https://pokemmo.eu/download_file/4/
+          pattern: https://dl.pokemmo.eu/download/pokemmo-launcher_([0-9.-]+).deb
+      - type: file
+        path: pokemmo
+      - type: script
+        dest-filename: apply_extra
+        commands:
+          - ar x pokemmo-launcher_1.4-1.deb
+          - tar xf data.tar.xz
+          - mv usr/games/pokemmo-launcher pokemmo-launcher
+          - sed -i 's|/usr/share/|/app/extra/|g' pokemmo-launcher
+          - mv usr/share/games games
+          - mv usr/share/locale locale
+          - rm -r pokemmo-launcher_1.4-1.deb control.tar.gz debian-binary data.tar.xz usr
+
+      - type: file
+        path: eu.pokemmo.PokeMMO.desktop
+
+      - type: file
+        path: eu.pokemmo.PokeMMO.appdata.xml

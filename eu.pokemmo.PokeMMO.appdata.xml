@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>eu.pokemmo.PokeMMO</id>
+  <name>PokeMMO</name>
+  <summary>Multiplayer animal hoarder simulator</summary>
+  <launchable type="desktop-id">eu.pokemmo.PokeMMO.desktop</launchable>
+  <project_license>LicenseRef-proprietary</project_license>
+  <developer_name>PokeMMO</developer_name>
+</component>

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PATH="${PATH}:/usr/lib/sdk/openjdk11/bin"
+
+exec /app/extra/pokemmo-launcher

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PokeMMO
+Comment=Multiplayer animal hoarder simulator
+Icon=eu.pokemmo.PokeMMO  # TODO: check with upstream if we can have these.
+Exec=pokemmo
+Categories=Game;
+StartupWMClass=PokeMMO  # Maybe com-pokeemu-updater-ClientUpdater?
