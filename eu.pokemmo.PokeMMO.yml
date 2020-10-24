@@ -9,7 +9,6 @@ sdk-extensions:
   - org.freedesktop.Sdk.Extension.openjdk11
 
 finish-args:
-  - --persist=.pokemmo
   - --socket=pulseaudio
   - --socket=x11
   - --share=ipc

@@ -2,4 +2,4 @@
 
 export PATH="${PATH}:/usr/lib/sdk/openjdk11/bin"
 
-exec /app/extra/pokemmo-launcher
+exec /app/extra/pokemmo-launcher -H "${XDG_DATA_HOME}/pokemmo"
