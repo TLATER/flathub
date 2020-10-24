@@ -52,6 +52,9 @@ modules:
           - ar x pokemmo-launcher_1.4-1.deb
           - tar xf data.tar.xz
           - mv usr/games/pokemmo-launcher pokemmo-launcher
+
+          # The PokeMMO launcher is hard-coded to use /usr/share. This
+          # obviously won't work.
           - sed -i 's|/usr/share/|/app/extra/|g' pokemmo-launcher
           - mv usr/share/games games
           - mv usr/share/locale locale
