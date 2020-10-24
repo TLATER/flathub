@@ -56,6 +56,18 @@ modules:
           # The PokeMMO launcher is hard-coded to use /usr/share. This
           # obviously won't work.
           - sed -i 's|/usr/share/|/app/extra/|g' pokemmo-launcher
+          # For some reason, the launcher will claim that it can't
+          # verify the installation if a lib directory is missing in
+          # the installed files. It never downloads any libraries,
+          # though, and the game runs fine without it.
+          #
+          # My guess is that we're bundling all required libs with
+          # jdk11, and the java bootstrapper is smart enough to figure
+          # this out, but the devs have never tested their launcher on
+          # such a system, making the launcher fail. Let's patch this
+          # out.
+          - sed -i 's@|| ! -d "$POKEMMO/lib" @@' pokemmo-launcher
+
           - mv usr/share/games games
           - mv usr/share/locale locale
           - rm -r pokemmo-launcher_1.4-1.deb control.tar.gz debian-binary data.tar.xz usr
